@@ -13,10 +13,6 @@ return {
           delay = 0,
         },
       },
-      -- exclude .jj
-      fzf_opts = {
-        ['--walker-skip'] = '.git,node_modules,.jj',
-      },
       files = {
         -- exclude .jj; respsect .gitignore even if this is not a git repo (e.g. a jj repo)
         cmd = 'fd --no-require-git --color=never --hidden --type f --type l --exclude .git --exclude .jj',
