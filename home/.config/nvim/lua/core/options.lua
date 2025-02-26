@@ -64,3 +64,11 @@ vim.opt.listchars = {
   trail = '·',
   nbsp = '␣',
 }
+
+vim.diagnostic.config {
+  float = {
+    border = 'rounded',
+  },
+}
+
+-- vim.lsp.handlers.hover()

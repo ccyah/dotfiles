@@ -7,36 +7,61 @@ return {
       'nvim-treesitter/nvim-treesitter',
     },
     config = function()
+      local deepseek_adapter = function(model)
+        return function()
+          return require('codecompanion.adapters').extend('openai_compatible', {
+            name = model,
+            env = {
+              api_key = 'cmd:op read op://Personal/deepseek_api_token/credential --no-newline',
+              url = 'https://api.deepseek.com',
+              chat_url = '/v1/chat/completions',
+            },
+            schema = {
+              model = { default = model },
+            },
+          })
+        end
+      end
+
+      local local_deepseek_adapter = function()
+        return function()
+          return require('codecompanion.adapters').extend('ollama', {
+            name = 'local_deepseek',
+            schema = {
+              model = {
+                default = 'deepseek-r1:7b',
+              },
+              num_ctx = {
+                default = 4028,
+              },
+            },
+          })
+        end
+      end
+
       require('codecompanion').setup {
         adapters = {
-          ollama = function()
-            return require('codecompanion.adapters').extend('ollama', {
-              schema = {
-                model = {
-                  default = 'deepseek-r1:7b',
-                },
-                num_ctx = {
-                  default = 4028,
-                },
-              },
-            })
-          end,
-          openai_compatible = function()
-            return require('codecompanion.adapters').extend('openai_compatible', {
-              env = {
-                api_key = 'LLM_NVIM_DEEPSEEK_API_TOKEN',
-                url = 'https://api.deepseek.com',
-                chat_url = '/v1/chat/completions',
-              },
-            })
-          end,
+          local_deepseek = local_deepseek_adapter(),
+          deepseek_chat = deepseek_adapter 'deepseek-chat',
+          deepseek_reasoner = deepseek_adapter 'deepseek-reasoner',
         },
         strategies = {
           chat = {
-            adapter = 'ollama',
+            adapter = 'deepseek_chat',
+            slash_commands = {
+              ['file'] = {
+                -- Location to the slash command in CodeCompanion
+                callback = 'strategies.chat.slash_commands.file',
+                description = 'Select a file using fzf_lua',
+                opts = {
+                  provider = 'default', -- Other options include 'default', 'mini_pick', 'fzf_lua', snacks
+                  contains_code = true,
+                },
+              },
+            },
           },
           inline = {
-            adapter = 'ollama',
+            adapter = 'deepseek_chat',
           },
         },
       }

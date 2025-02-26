@@ -56,6 +56,7 @@ return {
 
       require('mini.pairs').setup()
 
+      vim.g.minipairs_disable = true
       local toggleAutoPair = function()
         vim.g.minipairs_disable = not vim.g.minipairs_disable
       end
@@ -72,13 +73,12 @@ return {
   },
 
   {
-    "aaronik/treewalker.nvim",
-
+    'aaronik/treewalker.nvim',
     config = function()
       -- The following options are the defaults.
       -- Treewalker aims for sane defaults, so these are each individually optional,
       -- and the whole opts block is optional as well.
-      require('treewalker').setup({
+      require('treewalker').setup {
         -- Whether to briefly highlight the node after jumping to it
         highlight = true,
 
@@ -87,14 +87,14 @@ return {
 
         -- The color of the above highlight. Must be a valid vim highlight group.
         -- (see :h highlight-group for options)
-        highlight_group = "ColorColumn",
-      })
+        highlight_group = 'ColorColumn',
+      }
 
       vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { noremap = true, silent = true })
       vim.keymap.set({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>', { noremap = true, silent = true })
       vim.keymap.set({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { noremap = true, silent = true })
       vim.keymap.set({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>', { noremap = true, silent = true })
-    end
+    end,
   },
 
   {
@@ -108,19 +108,4 @@ return {
   },
 
   { 'meznaric/key-analyzer.nvim', opts = {} },
-
-  -- {
-  --   'folke/flash.nvim',
-  --   event = 'VeryLazy',
-  --   ---@type Flash.Config
-  --   opts = {},
-  --   -- stylua: ignore
-  --   keys = {
-  --     { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-  --     { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-  --     { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-  --     { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-  --     { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-  --   },
-  -- },
 }

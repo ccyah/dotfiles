@@ -18,15 +18,11 @@ return {
     -- lsp completion capabilities
     'saghen/blink.cmp',
 
-    -- need it for vim.ui.select
+    -- need it for kemaps and vim.ui.select
     'ibhagwan/fzf-lua',
   },
   config = function()
-    vim.keymap.set('n', '<leader>oh', function()
-      vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-    end, { desc = 'inlay [h]int' })
-
-    -- managed by homebrew by default
+    --[[------------------- My LSP configs ---------------------------]]
     local servers = {
       markdown_oxide = {},
       gopls = {}, -- go install golang.org/x/tools/gopls@latest
@@ -52,6 +48,7 @@ return {
         settings = {
           exportPdf = 'onSave',
           -- outputPath = '$root/target/$dir/$name',
+          formatterMode = 'typstyle',
         },
       },
       typos_lsp = {
@@ -64,6 +61,7 @@ return {
       },
     }
 
+    --[[--------- Setup servers using configs above ------------------]]
     for server_name, config in pairs(servers) do
       -- This handles overriding only values explicitly passed
       -- by the server configuration above. Useful when disabling
@@ -72,14 +70,32 @@ return {
       require('lspconfig')[server_name].setup(config)
     end
 
-    vim.keymap.set('n', '<leader>l', function()
-      local lsp_names = {}
+    --[[-------------------- LSP keymaps -----------------------------]]
+    local fzf = require 'fzf-lua'
 
-      local i = 1
-      for k, _ in pairs(servers) do
-        lsp_names[i] = k
-        i = i + 1
-      end
+    -- unset gr-defaults in nvim v0.11.0
+    vim.keymap.set('n', 'gr', 'gr', { nowait = true })
+
+    vim.keymap.set('n', 'gr', fzf.lsp_references, { desc = '[g]oto [r]eferences' })
+    vim.keymap.set('n', 'gI', fzf.lsp_implementations, { desc = '[g]oto [I]mplementation' })
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = '[g]oto [d]efinition' })
+    vim.keymap.set('n', 'gD', vim.lsp.buf.type_definition, { desc = '[g]oto type [D]efinition' })
+
+    vim.keymap.set('n', '<leader>s', fzf.lsp_document_symbols, { desc = '[s]ymbols' })
+    vim.keymap.set('n', '<leader>S', fzf.lsp_live_workspace_symbols, { desc = 'workspace [S]ymbols' })
+    vim.keymap.set('n', '<leader>x', fzf.lsp_finder, { desc = '[x]ray' })
+    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { desc = '[r]ename' })
+    vim.keymap.set({ 'n', 'v' }, '<leader>c', vim.lsp.buf.code_action, { desc = '[c]ode action' })
+
+    vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help)
+
+    vim.keymap.set('n', '<leader>oh', function()
+      vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+    end, { desc = 'inlay [h]int' })
+
+    vim.keymap.set('n', '<leader>l', function()
+      local lsp_names = vim.tbl_keys(servers)
+      table.sort(lsp_names)
 
       vim.ui.select(lsp_names, {
         prompt = 'LSP> ',
@@ -100,12 +116,5 @@ return {
         end)
       end)
     end, { desc = '[l]sp start/stop/restart' })
-
-    -- somehow this does not work anymore
-    -- auto attach markdown_oxide when in project "journals"
-    -- local proj_path = vim.fs.root(0, '.git')
-    -- if proj_path and proj_path == vim.fs.root(0, 'daily') and vim.fs.basename(proj_path) == 'journals' then
-    --   vim.cmd 'LspStart markdown_oxide'
-    -- end
   end,
 }

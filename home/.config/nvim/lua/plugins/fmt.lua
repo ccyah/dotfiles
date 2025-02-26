@@ -4,7 +4,7 @@ return {
   config = function()
     local conform = require 'conform'
     conform.setup {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(_)
         -- Disable with a global or buffer-local variable
         if vim.g.disable_autoformat then
@@ -20,7 +20,6 @@ return {
         yaml = { 'prettier' },
         html = { 'prettier' },
         tex = { 'latexindent' },
-        typst = { 'typstfmt' },
         -- Use the "*" filetype to run formatters on all filetypes.
         -- ['*'] = { 'codespell' },
         -- Use the "_" filetype to run formatters on filetypes that don't
