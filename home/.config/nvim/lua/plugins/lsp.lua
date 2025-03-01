@@ -44,7 +44,7 @@ return {
       pyright = {},
       ruff = {},
       tinymist = {
-        offset_encoding = 'utf-8', -- https://github.com/Myriad-Dreamin/tinymist/issues/638#issuecomment-2395941103
+        -- offset_encoding = 'utf-8', -- https://github.com/Myriad-Dreamin/tinymist/issues/638#issuecomment-2395941103
         settings = {
           exportPdf = 'onSave',
           -- outputPath = '$root/target/$dir/$name',
@@ -87,7 +87,7 @@ return {
     vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { desc = '[r]ename' })
     vim.keymap.set({ 'n', 'v' }, '<leader>c', vim.lsp.buf.code_action, { desc = '[c]ode action' })
 
-    vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help)
+    vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help, { desc = '[s]ignature_help' })
 
     vim.keymap.set('n', '<leader>oh', function()
       vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())

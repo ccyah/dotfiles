@@ -14,7 +14,7 @@ return {
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        ocaml = { 'ocamlformat' },
+        ocaml = { 'ocamlformat' }, -- opam
         json = { 'prettier' },
         markdown = { 'prettier' },
         yaml = { 'prettier' },

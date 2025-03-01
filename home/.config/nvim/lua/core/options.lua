@@ -65,10 +65,13 @@ vim.opt.listchars = {
   nbsp = '␣',
 }
 
+-- bordered diag msg
 vim.diagnostic.config {
   float = {
     border = 'rounded',
   },
 }
 
--- vim.lsp.handlers.hover()
+-- sensible tab because i hate 8 space tab
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
