@@ -50,6 +50,10 @@ vim.keymap.set('n', '<leader>k', function()
   end
 end, { desc = 'toggle quic[k]fix' })
 
--- Stolen from Helix
-vim.keymap.set({ 'n', 'v' }, 'gs', '_', { desc = 'goto first non-blank' })
-vim.keymap.set({ 'n', 'v' }, 'gl', '$', { desc = 'goto line end' })
+-- H and L aint nothing to me
+-- vim.keymap.set({ 'n', 'v' }, 'H', '_', { desc = 'goto first non-blank' })
+-- vim.keymap.set({ 'n', 'v' }, 'L', '$', { desc = 'goto line end' })
+
+-- stolen from helix
+-- vim.keymap.set({ 'n', 'v' }, 'gs', '_', { desc = 'goto first non-blank' })
+-- vim.keymap.set({ 'n', 'v' }, 'gl', '$', { desc = 'goto line end' })

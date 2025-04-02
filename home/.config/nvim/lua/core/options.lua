@@ -56,7 +56,7 @@ vim.opt.hlsearch = true
 -- No more annoying swap file
 vim.opt.swapfile = false
 
--- show more info
+-- Show more char info
 vim.opt.list = true
 vim.opt.listchars = {
   -- eol = '󰌑',
@@ -65,13 +65,35 @@ vim.opt.listchars = {
   nbsp = '␣',
 }
 
--- bordered diag msg
-vim.diagnostic.config {
-  float = {
-    border = 'rounded',
-  },
-}
-
--- sensible tab because i hate 8 space tab
+-- Sensible tab because i hate 8 space tab
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+
+-- Rounded border for all floating windows
+vim.o.winborder = 'rounded'
+
+-- Virtual line is great at pointing out error location and differentiate multiples of them in one line,
+-- but it will move my codes around and make it flicker
+-- some options are considered:
+-- 1. [x] current_line = true -- less noise but not good enough because as I scroll through my codes it will still flicker; so i guess I'll just scroll less and jump more then
+-- 2. [ ] vim.diagnostic.open_float() like but show virtual line instead of a floating window
+
+vim.diagnostic.config {
+  virtual_lines = {
+    current_line = true,
+  },
+  virtual_text = true,
+}
+
+-- vim.keymap.set('n', '<C-w>d', function()
+--   vim.diagnostic.config { virtual_lines = { current_line = true }, virtual_text = false }
+--
+--   vim.api.nvim_create_autocmd('CursorMoved', {
+--     -- with a autocmd group and clear=true, we can create as many such autocmds as we want and at most one instance will exist
+--     group = vim.api.nvim_create_augroup('line-diagnostics', { clear = true }),
+--     callback = function()
+--       vim.diagnostic.config { virtual_lines = false, virtual_text = true }
+--       return true
+--     end,
+--   })
+-- end)
