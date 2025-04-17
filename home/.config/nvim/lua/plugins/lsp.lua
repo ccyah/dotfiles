@@ -1,10 +1,13 @@
--- for Go Templ
-vim.filetype.add { extension = { templ = 'templ' } }
-
 return {
   'neovim/nvim-lspconfig',
   event = 'VeryLazy',
   dependencies = {
+    -- lsp completion capabilities before the automatic lsp capability setup
+    'saghen/blink.cmp',
+
+    -- need it for kemaps and vim.ui.select
+    'ibhagwan/fzf-lua',
+
     -- Useful status updates for LSP
     { 'j-hui/fidget.nvim', config = true },
 
@@ -14,16 +17,10 @@ return {
       ft = 'lua', -- only load on lua files
       config = true,
     },
-
-    -- lsp completion capabilities
-    'saghen/blink.cmp',
-
-    -- need it for kemaps and vim.ui.select
-    'ibhagwan/fzf-lua',
   },
   config = function()
-    --[[------------------- My LSP configs ---------------------------]]
-    local servers = {
+    --[[------------------- Fav LSPs and their extra configs ---------------------------]]
+    local autostart_servers = {
       markdown_oxide = {},
       gopls = {}, -- go install golang.org/x/tools/gopls@latest
       golangci_lint_ls = {}, -- go install github.com/nametake/golangci-lint-langserver@latest
@@ -51,8 +48,10 @@ return {
           formatterMode = 'typstyle',
         },
       },
+    }
+
+    local hold_ur_horse_servers = {
       typos_lsp = {
-        autostart = false,
         init_options = {
           -- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
           -- Defaults to error.
@@ -62,12 +61,13 @@ return {
     }
 
     --[[--------- Setup servers using configs above ------------------]]
-    for server_name, config in pairs(servers) do
-      -- This handles overriding only values explicitly passed
-      -- by the server configuration above. Useful when disabling
-      -- certain features of an LSP (for example, turning off formatting for tsserver)
-      config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-      require('lspconfig')[server_name].setup(config)
+    for server_name, extra_config in pairs(autostart_servers) do
+      vim.lsp.config(server_name, extra_config)
+      vim.lsp.enable(server_name)
+    end
+
+    for server_name, extra_config in pairs(hold_ur_horse_servers) do
+      vim.lsp.config(server_name, extra_config)
     end
 
     --[[-------------------- LSP keymaps -----------------------------]]
@@ -94,7 +94,7 @@ return {
     end, { desc = 'inlay [h]int' })
 
     vim.keymap.set('n', '<leader>l', function()
-      local lsp_names = vim.tbl_keys(servers)
+      local lsp_names = vim.tbl_keys(vim.tbl_extend('error', autostart_servers, hold_ur_horse_servers))
       table.sort(lsp_names)
 
       vim.ui.select(lsp_names, {
@@ -112,7 +112,31 @@ return {
             return
           end
 
-          vim.cmd('Lsp' .. action_choice .. ' ' .. lsp_choice)
+          local lsp_start = function()
+            vim.lsp.start(vim.lsp.config[lsp_choice])
+          end
+
+          local lsp_stop = function()
+            local client = vim.lsp.get_clients {
+              bufnr = 0, -- current buf
+              name = lsp_choice,
+            }
+
+            vim.lsp.stop_client(client)
+          end
+
+          local lsp_restart = function()
+            lsp_stop()
+            lsp_start()
+          end
+
+          if action_choice == 'Start' then
+            lsp_start()
+          elseif action_choice == 'Stop' then
+            lsp_stop()
+          elseif action_choice == 'Restart' then
+            lsp_restart()
+          end
         end)
       end)
     end, { desc = '[l]sp start/stop/restart' })
