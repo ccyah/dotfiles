@@ -4,14 +4,7 @@ return {
   config = function()
     local conform = require 'conform'
     conform.setup {
-      notify_on_error = true,
-      format_on_save = function(_)
-        -- Disable with a global or buffer-local variable
-        if vim.g.disable_autoformat then
-          return
-        end
-        return { timeout_ms = 500, lsp_fallback = true }
-      end,
+      -- Map of filetype to formatters
       formatters_by_ft = {
         lua = { 'stylua' },
         ocaml = { 'ocamlformat' }, -- opam
@@ -26,10 +19,20 @@ return {
         -- have other formatters configured.
         ['_'] = { 'trim_whitespace' },
       },
+      -- Conform will notify you when a formatter errors
+      notify_on_error = true,
+      -- If this is set, Conform will run the formatter on save.
+      -- It will pass the table to conform.format().
+      -- This can also be a function that returns the table.
+      format_on_save = {
+        -- I recommend these options. See :help conform.format for details.
+        lsp_format = 'fallback',
+        timeout_ms = 500,
+      },
     }
 
     local fmt = function()
-      conform.format({ lsp_fallback = true }, nil)
+      conform.format({ lsp_format = 'fallback' }, nil)
     end
 
     vim.keymap.set('n', '<leader>if', fmt, { desc = '[f]ormatter' })
