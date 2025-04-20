@@ -21,9 +21,19 @@ return {
   config = function()
     --[[------------------- Fav LSPs and their extra configs ---------------------------]]
     local servers = {
-      markdown_oxide = {},
+      markdown_oxide = {
+        capabilities = {
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true,
+            },
+          },
+        },
+      },
       gopls = {}, -- go install golang.org/x/tools/gopls@latest
-      golangci_lint_ls = {}, -- go install github.com/nametake/golangci-lint-langserver@latest
+      -- go install github.com/nametake/golangci-lint-langserver@latest
+      -- and don't forget to udpate golangci-lint as well
+      golangci_lint_ls = {},
       lua_ls = {
         settings = {
           Lua = {
@@ -79,14 +89,15 @@ return {
 
     vim.keymap.set('n', 'gr', fzf.lsp_references, { desc = '[g]oto [r]eferences' })
     vim.keymap.set('n', 'gI', fzf.lsp_implementations, { desc = '[g]oto [I]mplementation' })
-    vim.keymap.set('n', 'gd', fzf.lsp_definitions, { desc = '[g]oto [d]efinition' })
-    vim.keymap.set('n', 'gD', fzf.lsp_typedefs, { desc = '[g]oto type [D]efinition' })
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = '[g]oto [d]efinition' })
+    vim.keymap.set('n', 'gD', vim.lsp.buf.type_definition, { desc = '[g]oto type [D]efinition' })
+
     vim.keymap.set('n', '<leader>s', fzf.lsp_document_symbols, { desc = '[s]ymbols' })
     vim.keymap.set('n', '<leader>S', fzf.lsp_live_workspace_symbols, { desc = 'workspace [S]ymbols' })
     vim.keymap.set('n', '<leader>x', fzf.lsp_finder, { desc = '[x]ray' })
-
     vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { desc = '[r]ename' })
     vim.keymap.set({ 'n', 'v' }, '<leader>c', vim.lsp.buf.code_action, { desc = '[c]ode action' })
+
     vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help, { desc = '[s]ignature_help' })
 
     vim.keymap.set('n', '<leader>oh', function()

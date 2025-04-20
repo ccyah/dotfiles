@@ -24,9 +24,7 @@ return {
     }
 
     -- register fzf-lua as the UI selector
-    -- temporarily disbable it because fzf-lua does not work well with CodeCompanion slash commands
-    -- see journals/daily/2025-02-19.md
-    -- fzf.register_ui_select()
+    fzf.register_ui_select()
 
     -- general fzf-lua commands
     local keymaps = {
